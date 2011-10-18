@@ -24,11 +24,17 @@ debug=true
 
 ## Private functions
 function conclear {
+# Clears the console if debug isn't enabled
 	if [ "$debug" != true ] ; then
 		clear
 	fi
 }
 
+function dbgPrint {
+	if [ "$debug" == true ] ; then
+		echo "$1"
+	fi
+}
 
 conclear
 
@@ -46,6 +52,7 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Do you want to use the vanilla mincraft-server or do you want to use bukkit? [vanilla/bukkit]"
 		read serverversion
+		dbgPrint "$serverversion"
 		if [ "$serverversion" == "vanilla" ] || [ "$serverversion" == "bukkit" ] ; then
 			step=1
 		fi
@@ -63,7 +70,9 @@ if [ "$interactive" == true ] ; then
 				ans="n"
 				echo "It seems that Java 6 isn't installed, should I attempt to install it automatically? [y/N]"
 				read ans
+				dbgPrint "$ans"
 			done
+			
 			if [ "$ans" == "y" ] ; then
 				if [ "$root" == 0 ] ; then
 					sudo $javainstall
@@ -94,6 +103,7 @@ if [ "$interactive" == true ] ; then
 					echo "You could remove Open JDK by exiting this installer and then run it again to install Oracle (Sun) Java 6 JRE."
 					echo "Do you want to continue the installation of the minecraft-server with Open JDK? [Y/n]"
 					read ans
+					dbgPrint "$ans"
 					if [ "$ans" == "y" ] ; then
 						step=1
 					elif [ "$ans" == "n" ] ; then
