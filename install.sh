@@ -71,27 +71,31 @@ if [ "$interactive" == true ] ; then
 				echo "It seems that Java 6 isn't installed, should I attempt to install it automatically? [y/N]"
 				read ans
 				dbgPrint "$ans"
-			done
-			
-			if [ "$ans" == "y" ] ; then
-				if [ "$root" == 0 ] ; then
-					sudo $javainstall
-				else
-					$javainstall
-				fi
-				java=`which java`
-				if [ "$java" == "" ] ; then
-					echo "It seems like I was unable to install java. Please go to this URL and download the package manually."
+				
+				if [ "$ans" == "y" ] ; then
+					if [ "$root" == 0 ] ; then
+						sudo $javainstall
+					else
+						$javainstall
+					fi
+					java=`which java`
+					if [ "$java" == "" ] ; then
+						echo "It seems like I was unable to install java. Please go to this URL and download the package manually."
+						echo "http://www.java.com/en/download/manual.jsp"
+						echo "Restart me when the installation is complete."
+						exit 1
+					else
+						step=0
+					fi					
+				elif [ "$ans" == "n" ] ; then
+					echo "Please install java by either using apt (apt-get install sun-java6-jre) or go to this website and download it from there."
 					echo "http://www.java.com/en/download/manual.jsp"
 					echo "Restart me when the installation is complete."
 					exit 1
+				else
+					step=0
 				fi
-			else
-				echo "Please install java by either using apt (apt-get install sun-java6-jre) or go to this website and download it from there."
-				echo "http://www.java.com/en/download/manual.jsp"
-				echo "Restart me when the installation is complete."
-				exit 1
-			fi
+			done
 		else
 			java=`dpkg --get-selections | awk '/\openjdk-6-jre/{print $1}'`
 			if [ "$java" == "openjdk-6-jre" ] ; then
