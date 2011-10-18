@@ -10,8 +10,8 @@
 #####################
 # Should the script be interactive or will you define all variables below?
 interactive=true
-if [ "$interactive" == true ] ; then
-	serverversion="vanilla"		 # vanilla or bukkit
+if [ "$interactive" != true ] ; then	# if we're not going to go with interactive, set all variables below
+	serverversion="vanilla"				# vanilla or bukkit
 fi
 #####################
 ## END OF CONFIG
@@ -19,8 +19,18 @@ fi
 
 # Private config-area-shit
 javainstall="apt-get install -y -qq sun-java6-jre"
+debug=true
 
-clear
+
+## Private functions
+function conclear {
+	if [ "$debug" != true ] ; then
+		clear
+	fi
+}
+
+
+conclear
 
 # are we root?
 if [[ $EUID -ne 0 ]] ; then
@@ -33,7 +43,7 @@ if [ "$interactive" == true ] ; then
 
 	step=0
 	until [ "$step" == 1 ] ; do
-		clear
+		conclear
 		echo "Do you want to use the vanilla mincraft-server or do you want to use bukkit? [vanilla/bukkit]"
 		read serverversion
 		if [ "$serverversion" == "vanilla" ] || [ "$serverversion" == "bukkit" ] ; then
@@ -49,7 +59,7 @@ if [ "$interactive" == true ] ; then
 		if [ "$java" == "" ] ; then
 			step=0
 			until [ "$step" == 1 ] ; do
-				clear
+				conclear
 				ans="n"
 				echo "It seems that Java 6 isn't installed, should I attempt to install it automatically? [y/N]"
 				read ans
@@ -79,7 +89,7 @@ if [ "$interactive" == true ] ; then
 				step=0
 				ans="y"
 				until [ "$step" == 1 ] ; do
-				clear
+				conclear
 					echo "Notice: It seems that you have Open JDK installed. Minecraft is known to have issues with this version of Java, proceed at your own risk."
 					echo "You could remove Open JDK by exiting this installer and then run it again to install Oracle (Sun) Java 6 JRE."
 					echo "Do you want to continue the installation of the minecraft-server with Open JDK? [Y/n]"
@@ -98,5 +108,16 @@ if [ "$interactive" == true ] ; then
 				echo "This will most probably work allright for you so we're just going to proceed with the installation."
 			fi
 		fi
+	fi	
+	
+	# now we have java installed, and hopefully working.
+	# lets move on to installing the actual server.
+		
+		
+		
+		
+		
+		
+		
 	
 fi
