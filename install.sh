@@ -68,7 +68,7 @@ if [ "$interactive" == true ] ; then
 			until [ "$step" == 1 ] ; do
 				conclear
 				ans="n"
-				echo "It seems that Java 6 isn't installed, should I attempt to install it automatically? [y/N]"
+				echo "It seems that Java 6 isn't installed, should I attempt to install it automatically? [y/n]"
 				read ans
 				dbgPrint "$ans"
 				
@@ -86,7 +86,7 @@ if [ "$interactive" == true ] ; then
 						exit 1
 					else
 						step=0
-					fi					
+					fi
 				elif [ "$ans" == "n" ] ; then
 					echo "Please install java by either using apt (apt-get install sun-java6-jre) or go to this website and download it from there."
 					echo "http://www.java.com/en/download/manual.jsp"
@@ -105,7 +105,7 @@ if [ "$interactive" == true ] ; then
 				conclear
 					echo "Notice: It seems that you have Open JDK installed. Minecraft is known to have issues with this version of Java, proceed at your own risk."
 					echo "You could remove Open JDK by exiting this installer and then run it again to install Oracle (Sun) Java 6 JRE."
-					echo "Do you want to continue the installation of the minecraft-server with Open JDK? [Y/n]"
+					echo "Do you want to continue the installation of the minecraft-server with Open JDK? [y/n]"
 					read ans
 					dbgPrint "$ans"
 					if [ "$ans" == "y" ] ; then
@@ -113,7 +113,6 @@ if [ "$interactive" == true ] ; then
 					elif [ "$ans" == "n" ] ; then
 						exit 1
 					else
-						ans="y"
 						step=0
 					fi
 				done
