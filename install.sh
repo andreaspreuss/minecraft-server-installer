@@ -12,6 +12,7 @@
 interactive=true
 if [ "$interactive" != true ] ; then	# if we're not going to go with interactive, set all variables below
 	serverversion="vanilla"				# vanilla or bukkit
+	installdir="/this/is/no/real/dir"	# installation-directory
 fi
 #####################
 ## END OF CONFIG
@@ -100,9 +101,8 @@ if [ "$interactive" == true ] ; then
 			java=`dpkg --get-selections | awk '/\openjdk-6-jre/{print $1}'`
 			if [ "$java" == "openjdk-6-jre" ] ; then
 				step=0
-				ans="y"
 				until [ "$step" == 1 ] ; do
-				conclear
+					conclear
 					echo "Notice: It seems that you have Open JDK installed. Minecraft is known to have issues with this version of Java, proceed at your own risk."
 					echo "You could remove Open JDK by exiting this installer and then run it again to install Oracle (Sun) Java 6 JRE."
 					echo "Do you want to continue the installation of the minecraft-server with Open JDK? [y/n]"
@@ -125,12 +125,102 @@ if [ "$interactive" == true ] ; then
 	
 	# now we have java installed, and hopefully working.
 	# lets move on to installing the actual server.
-		
-		
-		
-		
-		
-		
-		
+	dir="$( cd -P "$( dirname "$0" )" && pwd )"
+	installdir=""
+	step=0
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should the server be installed into this directory? ($dir) [y/n]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == "y" ] ; then
+			installdir="$dir"
+			step=1
+		elif [ "$ans" == "n" ] ; then
+			step=1
+		else
+			step=0
+			continue
+		fi
+	done
 	
-fi
+	if [ "$installdir" == "" ] ; then
+		step=0
+		until [ "$step" == 1 ] ; do
+			conclear
+			echo "Please enter the directory to install the server into"
+			read ans
+			dbgPrint "$ans"
+			if [ ! -d "$ans" ] ; then
+				step1=0
+				until [ "$step1" == 1 ] ; do
+					echo "Do you want me to create the dir $ans? [y/n]"
+					read ans1
+					dbgPrint "$ans1"
+					if [ "$ans1" == "y" ] ; then
+						mkdir -p "$ans"
+						step1=1
+					elif [ "$ans1" == "n" ] ; then
+						step1=1
+					else
+						step1=0
+					fi
+				done
+				
+				if [ -d "$ans" ] ; then
+					installdir="$ans"
+					step=1
+				else
+					step=0
+				fi
+			fi
+		done
+	fi
+	
+	
+	# now we even have a directory to work with
+	cd "$installdir"
+	
+	
+
+	
+	if [ "$serverversion" == "bukkit" ] ; then
+		# download the latest recommended version of bukkit
+		wget -nv -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
+	
+	else
+		# download the lates vanilla minecraft-server
+		wget -nv -O minecraft_server.jar https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
+	fi
+	
+	
+	
+	
+
+	# if we're runnig this as root we better set our permissions straight
+	
+#	if [ "$root" == 1 ] ; then
+#		step=0
+#		until [ "$step" == 1 ] ; then
+#			conclear
+#			echo "Since we're running this script as root, which user and group should own the server-directory ($installdir)? [user:group]"
+#			read ans
+#			dbgPrint "$ans"
+			
+			## following here we should check if the user and group is correctly formatted
+			## format will be checked against the default regexp; ^[a-z][-a-z0-9]*\$
+			
+			## furthermore we will perhaps check in /etc/passwd if that user and associated group actually exist,
+			## just to prevent chown to spew errors in our face :(
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+fi # end of interactive mode
