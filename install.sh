@@ -98,5 +98,7 @@ if [ "$interactive" == true ] ; then
 				echo "This will most probably work allright for you so we're just going to proceed with the installation."
 			fi
 		fi
+	fi
+	# now we know that java is installed, moving on to real shit
 	
 fi
