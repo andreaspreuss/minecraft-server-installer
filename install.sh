@@ -182,20 +182,55 @@ if [ "$interactive" == true ] ; then
 	cd "$installdir"
 	
 	
-
+	server=""
 	
 	if [ "$serverversion" == "bukkit" ] ; then
 		# download the latest recommended version of bukkit
 		wget -nv -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
-	
+		server="java -Xmx1024M -Xms1024M -jar craftbukkit.jar"	
 	else
 		# download the lates vanilla minecraft-server
 		wget -nv -O minecraft_server.jar https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
+		server="java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui";
 	fi
 	
 	
-	
-	
+	cat > server-watch.sh <<'SCRIPT'
+#!/bin/bash
+##################################################################################################
+## ABOUT                                                                                        ##
+##################################################################################################
+## serverscript v1.0 by devvis                                                                  ##
+##################################################################################################
+## Be sure to edit the server-variable to contain the full path to your minecraft_server.jar if ##
+## this script isn't running from the same working-dir as the server.                           ##
+##################################################################################################
+
+############
+## CONFIG ##
+############
+SCRIPT
+
+echo "server=\"$server\"" >> server-watch.sh
+
+cat >> server-watch.sh <<'SCRIPT'
+############################################################################
+## DO NOT EDIT ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING ##
+############################################################################
+ver="1.0"
+
+
+echo "serverscript v$ver by devvis started"
+echo "Running on `uname -o`"
+
+until $server; do
+echo "Minecraft-server crasched with error-code $?. Restarting..." >&2
+    sleep 1
+done
+
+SCRIPT
+
+chmod +x server-watch.sh
 
 	# if we're runnig this as root we better set our permissions straight
 	
