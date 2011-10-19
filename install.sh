@@ -40,14 +40,51 @@ function dbgPrint {
 conclear
 
 # are we root?
-if [[ $EUID -ne 0 ]] ; then
+if [ $EUID -ne 0 ] ; then
 	root=0
 else
 	root=1
 fi
 
 if [ "$interactive" == true ] ; then
-
+	
+	# trying to determine the suitable amount of ram that the server should use
+	totram="$($_CMD free -mto | grep Mem: | awk '{ print $2 }')"
+	freeram="$($_CMD free -mto | grep Mem: | awk '{ print $4 }')"
+	
+	if [ "$totram" -lt 1024 ] ; then
+		step=0
+		until [ "$step" == 1 ] ; do
+			conclear
+			echo "NOTICE: It seems that you got less than 1024 MB of RAM on your server."
+			echo "This will usually lead to a bad server performance, and you'll be very limited in the number of simultaneous players."
+			echo "I strongly suggest that you add more RAM before continuing with the installation."
+			echo "Do you want to continue anyway? [y/n]"
+			read ans
+			dbgPrint ans
+			if [ "$ans" == "y" ] ; then
+				step=1
+			elif [ "$ans" == "n" ] ; then
+				exit 1
+			else
+				step=0
+			fi
+		done
+		ram="1024"
+	else 
+		if [ "$freeram" -gt 1024 ] && [ "$totram" -gt 2048 ] && [ "$totram" -lt 3072 ] ; then
+			ram="1536"
+		elif [ "$freeram" -gt 1024 ] && [ "$totram" -gt 2560 ] && [ "$totram" -lt 3584 ] ; then
+			ram="2048"
+		elif [ "$freeram" -gt 1024 ] && [ "$totram" -gt 3584 ] ; then
+			ram="2560"
+		else
+			ram="1024"
+			fi
+	fi
+	
+	echo "$ram"
+	
 	step=0
 	until [ "$step" == 1 ] ; do
 		conclear
@@ -180,8 +217,7 @@ if [ "$interactive" == true ] ; then
 	
 	# now we even have a directory to work with
 	cd "$installdir"
-	
-	
+
 	server=""
 	
 	if [ "$serverversion" == "bukkit" ] ; then
