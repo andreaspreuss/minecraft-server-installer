@@ -4,6 +4,19 @@
 
 # v1.0 - by devvis
 
+## TODO
+# * Check if we have write-permission to the dir, if not, try sudo for changing it within the script
+# * If the script is running as root, correct the permissions for all the dirs
+# * Add more distros (for java-installation since apt doesnt run very well on systems like fbsd
+
+
+
+
+
+
+
+
+
 
 #####################
 ## CONFIG
@@ -13,14 +26,35 @@ interactive=true
 if [ "$interactive" != true ] ; then	# if we're not going to go with interactive, set all variables below
 	serverversion="vanilla"				# vanilla or bukkit
 	installdir="/this/is/no/real/dir"	# installation-directory
+	installjava=true					# will try to install java if it isn't found on the system
+	
+	allownether=true					# should the nether be enabled on the server?
+	viewdistance=10						# what view-distance should be used? (10 is default and is recommended, reduce if you experience lag)
+	spawnmonsters=true					# should monsters spawn?
+	onlinemode=true						# should the users authenticate against the minecraft-servers? set to false if minecraft.net is down
+	spawnanimals=true					# should animals spawn?
+	maxplayers=20						# the maximum amount of players that can be online at the same time
+	serverip=""							# if you have more than one interface and want to bind to only one ip
+	pvp=true							# should pvp (player vs. player combat) be enabled?
+	levelseed=""						# do you want some special, fancy seed? enter it here
+	serverport=25565					# what port should the server bind to, 25565 is default
+	whitelist=false						# should the server use a white list to only allow certain people to connect? (edit white-list.txt)
+	allowflight=false					# should the users be able to fly if they have such client modification installed? (considered a hack by most people)
+	gamemode=0							# 0 for survival, 1 for creative
+	difficulty=1						# 0 for peaceful, 1 for easy, 2 for normal and 3 for hard. spawnmonsters=0 sets this to 0 as well
+	motd="Welcome to my minecraft-server!"	# what message should be displayed for newly connected players?
+	
+	
+	
 fi
 #####################
 ## END OF CONFIG
 #####################
 
-# Private config-area-shit
-javainstall="apt-get install -y -qq sun-java6-jre"
+## Private config area, the only thing you might want to touch here
+## would be setting debug=true, nothing else.
 debug=true
+javainstall="apt-get install -y -qq sun-java6-jre"
 
 
 ## Private functions
@@ -159,7 +193,7 @@ if [ "$interactive" == true ] ; then
 			fi
 		fi
 	fi	
-	
+
 	# now we have java installed, and hopefully working.
 	# lets move on to installing the actual server.
 	dir="$( cd -P "$( dirname "$0" )" && pwd )"
@@ -218,20 +252,87 @@ if [ "$interactive" == true ] ; then
 	# now we even have a directory to work with
 	cd "$installdir"
 
+	# Lets ask the user some questions about what kind of server they want
+	
+	#allownether=true						# should the nether be enabled on the server?
+	#viewdistance=10						# what view-distance should be used? (10 is default and is recommended, reduce if you experience lag)
+	#spawnmonsters=true						# should monsters spawn?
+	#onlinemode=true						# should the users authenticate against the minecraft-servers? set to false if minecraft.net is down
+	#spawnanimals=true						# should animals spawn?
+	#maxplayers=20							# the maximum amount of players that can be online at the same time
+	#serverip=""							# if you have more than one interface and want to bind to only one ip
+	#pvp=true								# should pvp (player vs. player combat) be enabled?
+	#levelseed=""							# do you want some special, fancy seed? enter it here
+	#serverport=25565						# what port should the server bind to, 25565 is default
+	#whitelist=false						# should the server use a white list to only allow certain people to connect? (edit white-list.txt)
+	#allowflight=false						# should the users be able to fly if they have such client modification installed? (considered a hack by most people)
+	#gamemode=0								# 0 for survival, 1 for creative
+	#difficulty=1							# 0 for peaceful, 1 for easy, 2 for normal and 3 for hard. spawnmonsters=0 sets this to 0 as well
+	#motd="Welcome to my minecraft-server!"	# what message should be displayed for newly connected players?
+	
+	conclear
+	echo "Now it's time for some questions about the settings of your server."
+	echo "Please note that all of these will be written into server.properties and can be easily changedafterwards, just open up the file and change the value from there!"
+	read ans
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; then
+		conclear
+		echo "Should the nether be allowed on the server? [y/n]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == "y" ] ; then
+			allownether=true
+			step1=1
+		elif [ "$ans1" == "n" ] ; then
+			allownether=false
+			step1=1
+		else
+			step1=0
+		fi
+	done
+	
 	server=""
+		
+	# Adding server.properties manually so that we can predefine some values,
+	# also fetches the server-version
+
+	
 	
 	if [ "$serverversion" == "bukkit" ] ; then
 		# download the latest recommended version of bukkit
 		wget -nv -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
-		server="java -Xmx1024M -Xms1024M -jar craftbukkit.jar"	
+		server="java -Xmx1024M -Xms1024M -jar craftbukkit.jar"
+cat > server.properties <<'PROPS'
+#Minecraft server properties
+#Wed Sep 14 14:33:18 CEST 2011
+#Created with minecraft-installer, by devvis
+level-name=world
+allow-nether=true
+view-distance=10
+spawn-monsters=true
+online-mode=true
+difficulty=1
+gamemode=0
+spawn-animals=true
+max-players=20
+server-ip=
+pvp=true
+level-seed=
+server-port=25565
+allow-flight=false
+white-list=false
+motd=A Minecraft Server
+PROPS
+
 	else
 		# download the lates vanilla minecraft-server
 		wget -nv -O minecraft_server.jar https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
 		server="java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui";
 	fi
 	
-	
-	cat > server-watch.sh <<'SCRIPT'
+cat > server-watch.sh <<SCRIPT
 #!/bin/bash
 ##################################################################################################
 ## ABOUT                                                                                        ##
@@ -245,11 +346,9 @@ if [ "$interactive" == true ] ; then
 ############
 ## CONFIG ##
 ############
-SCRIPT
 
-echo "server=\"$server\"" >> server-watch.sh
+server="$server"
 
-cat >> server-watch.sh <<'SCRIPT'
 ############################################################################
 ## DO NOT EDIT ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING ##
 ############################################################################
@@ -257,13 +356,12 @@ ver="1.0"
 
 
 echo "serverscript v$ver by devvis started"
-echo "Running on `uname -o`"
+echo "Running on \`uname -o\`"
 
-until $server; do
-echo "Minecraft-server crasched with error-code $?. Restarting..." >&2
+until \$server; do
+echo "Minecraft-server crasched with error-code \$?. Restarting..." >&2
     sleep 1
 done
-
 SCRIPT
 
 chmod +x server-watch.sh
