@@ -272,7 +272,7 @@ if [ "$interactive" == true ] ; then
 	
 	conclear
 	echo "Now it's time for some questions about the settings of your server."
-	echo "Please note that all of these will be written into server.properties and can be easily changedafterwards, just open up the file and change the value from there!"
+	echo "Please note that all of these will be written into server.properties and can be easily changed afterwards, just open up the file and change the value from there!"
 	read ans
 	
 	step=0
