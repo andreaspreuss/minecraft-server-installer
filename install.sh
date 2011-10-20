@@ -290,7 +290,7 @@ if [ "$interactive" == true ] ; then
 		echo "What view-distance should the server use? (default is 10, reduce if you're on a low-performing server) [num]"
 		read ans
 		dbgPrint "$ans"
-		if [ "$ans" == [0-9]* ] ; then
+		if [[ "$ans" == [0-9]* ]] ; then
 			viewdistance="$ans"
 			step1=1
 		else
@@ -367,7 +367,7 @@ if [ "$interactive" == true ] ; then
 			echo "How many concurrent players should be allowed on the server (recommendation based on system performance: $maxusers)"
 			read ans
 			dbgPrint "$ans"
-			if [ "$ans" == [0-9]* ] ; then
+			if [ "$ans" == [[0-9]* ]] ; then
 				maxplayers="$ans"
 				step1=1
 			else
@@ -388,7 +388,12 @@ if [ "$interactive" == true ] ; then
 		# download the latest recommended version of bukkit
 		wget -nv -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
 		server="java -Xmx1024M -Xms1024M -jar craftbukkit.jar"
-cat > server.properties <<PROPS
+
+	else
+		# download the lates vanilla minecraft-server
+		wget -nv -O minecraft_server.jar https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
+		server="java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui";
+		cat > server.properties <<PROPS
 #Minecraft server properties
 #Wed Sep 14 14:33:18 CEST 2011
 #Created with minecraft-installer by devvis
@@ -410,10 +415,6 @@ white-list=$whitelist
 motd=$motd
 PROPS
 
-	else
-		# download the lates vanilla minecraft-server
-		wget -nv -O minecraft_server.jar https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
-		server="java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui";
 	fi
 	
 cat > server-watch.sh <<SCRIPT
