@@ -71,10 +71,13 @@ function dbgPrint {
 	fi
 }
 
+if [[ "$debug" == true ]] ; then
+	set -v
+fi
 conclear
 
 # are we root?
-if [ $EUID -ne 0 ] ; then
+if [[ $EUID -ne 0 ]] ; then
 	root=0
 else
 	root=1
@@ -256,22 +259,7 @@ if [ "$interactive" == true ] ; then
 
 	# Lets ask the user some questions about what kind of server they want
 	
-	#allownether=true						# should the nether be enabled on the server?
-	#viewdistance=10						# what view-distance should be used? (10 is default and is recommended, reduce if you experience lag)
-	#spawnmonsters=true						# should monsters spawn?
-	#onlinemode=true						# should the users authenticate against the minecraft-servers? set to false if minecraft.net is down
-	#spawnanimals=true						# should animals spawn?
-	#maxplayers=20							# the maximum amount of players that can be online at the same time
-	#serverip=""							# if you have more than one interface and want to bind to only one ip
-	#pvp=true								# should pvp (player vs. player combat) be enabled?
-	#levelseed=""							# do you want some special, fancy seed? enter it here
-	#serverport=25565						# what port should the server bind to, 25565 is default
-	#whitelist=false						# should the server use a white list to only allow certain people to connect? (edit white-list.txt)
-	#allowflight=false						# should the users be able to fly if they have such client modification installed? (considered a hack by most people)
-	#gamemode=0								# 0 for survival, 1 for creative
-	#difficulty=1							# 0 for peaceful, 1 for easy, 2 for normal and 3 for hard. spawnmonsters=0 sets this to 0 as well
-	#motd="Welcome to my minecraft-server!"	# what message should be displayed for newly connected players?
-	
+
 	conclear
 	echo "Now it's time for some questions about the settings of your server."
 	echo "Please note that all of these will be written into server.properties and can be easily changed afterwards, just open up the file and change the value from there!"
@@ -279,7 +267,7 @@ if [ "$interactive" == true ] ; then
 	
 	step=0
 	ans=""
-	until [ "$step" == 1 ] ; then
+	until [ "$step" == 1 ] ; do
 		conclear
 		echo "Should the nether be allowed on the server? [y/n]"
 		read ans
@@ -287,16 +275,110 @@ if [ "$interactive" == true ] ; then
 		if [ "$ans" == "y" ] ; then
 			allownether=true
 			step1=1
-		elif [ "$ans1" == "n" ] ; then
+		elif [ "$ans" == "n" ] ; then
 			allownether=false
 			step1=1
 		else
 			step1=0
 		fi
 	done
+
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "What view-distance should the server use? (default is 10, reduce if you're on a low-performing server) [num]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == [0-9]* ] ; then
+			viewdistance="$ans"
+			step1=1
+		else
+			step1=0
+		fi
+	done
+
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should there be spawning monsters on the server? [y/n]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == "y" ] ; then
+			spawnmonsters=true
+			step1=1
+		elif [ "$ans" == "n" ] ; then
+			spawnmonsters=false
+			step1=1
+		else
+			step1=0
+		fi
+	done
+
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should there be spawning animals on the server? [y/n]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == "y" ] ; then
+			spawnanimals=true
+			step1=1
+		elif [ "$ans" == "n" ] ; then
+			spawnanimals=false
+			step1=1
+		else
+			step1=0
+		fi
+	done
+
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should the server verify users logging in against the minecraft.net-servers? (normally you want to say yes here) [y/n]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == "y" ] ; then
+			onlinemode=true
+			step1=1
+		elif [ "$ans" == "n" ] ; then
+			onlinemode=false
+			step1=1
+		else
+			step1=0
+		fi
+	done
+
+	# here we're going to estimate the number of users suitable for the server, of course you can change this by yourself
+	bc=`which bc`
+	if [ -a "$bc" ] ; then
+		maxusers=`echo "(($totram * 0.75) / 100)" | bc`
+	else
+		maxusers="unknown"
+	fi
+
+	step=0
+	ans=""
+		until [ "$step" == 1 ] ; do
+			conclear
+			echo "How many concurrent players should be allowed on the server (recommendation based on system performance: $maxusers)"
+			read ans
+			dbgPrint "$ans"
+			if [ "$ans" == [0-9]* ] ; then
+				maxplayers="$ans"
+				step1=1
+			else
+				step1=0
+			fi
+		done
+	
+	
 	
 	server=""
-		
+	
 	# Adding server.properties manually so that we can predefine some values,
 	# also fetches the server-version
 
@@ -311,21 +393,21 @@ cat > server.properties <<PROPS
 #Wed Sep 14 14:33:18 CEST 2011
 #Created with minecraft-installer by devvis
 level-name=world
-allow-nether=true
-view-distance=10
-spawn-monsters=true
-online-mode=true
-difficulty=1
-gamemode=0
-spawn-animals=true
-max-players=20
-server-ip=
-pvp=true
-level-seed=
-server-port=25565
-allow-flight=false
-white-list=false
-motd=A Minecraft Server
+allow-nether=$allownether
+view-distance=$viewdistance
+spawn-monsters=$spawnmonsters
+online-mode=$onlinemode
+difficulty=$difficulty
+gamemode=$gamemode
+spawn-animals=$spawnanimals
+max-players=$maxplayers
+server-ip=$serverip
+pvp=$pvp
+level-seed=$levelseed
+server-port=$serverport
+allow-flight=$allowflight
+white-list=$whitelist
+motd=$motd
 PROPS
 
 	else
