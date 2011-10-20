@@ -71,10 +71,13 @@ function dbgPrint {
 	fi
 }
 
+if [[ "$debug" == true ]] ; then
+	set -v
+fi
 conclear
 
 # are we root?
-if [ $EUID -ne 0 ] ; then
+if [[ $EUID -ne 0 ]] ; then
 	root=0
 else
 	root=1
@@ -373,7 +376,7 @@ if [ "$interactive" == true ] ; then
 	
 	
 	server=""
-		
+	
 	# Adding server.properties manually so that we can predefine some values,
 	# also fetches the server-version
 
