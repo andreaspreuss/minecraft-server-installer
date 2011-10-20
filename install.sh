@@ -188,8 +188,10 @@ if [ "$interactive" == true ] ; then
 					fi
 				done
 			else
+				conclear
 				echo "I cannot determine which version of Java that you're using, other than that I know you have Java installed."
 				echo "This will most probably work allright for you so we're just going to proceed with the installation."
+				read ans
 			fi
 		fi
 	fi	
@@ -304,10 +306,10 @@ if [ "$interactive" == true ] ; then
 		# download the latest recommended version of bukkit
 		wget -nv -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
 		server="java -Xmx1024M -Xms1024M -jar craftbukkit.jar"
-cat > server.properties <<'PROPS'
+cat > server.properties <<PROPS
 #Minecraft server properties
 #Wed Sep 14 14:33:18 CEST 2011
-#Created with minecraft-installer, by devvis
+#Created with minecraft-installer by devvis
 level-name=world
 allow-nether=true
 view-distance=10
