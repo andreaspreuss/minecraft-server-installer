@@ -362,18 +362,33 @@ if [ "$interactive" == true ] ; then
 
 	step=0
 	ans=""
-		until [ "$step" == 1 ] ; do
-			conclear
-			echo "How many concurrent players should be allowed on the server (recommendation based on system performance: $maxusers)"
-			read ans
-			dbgPrint "$ans"
-			if [ "$ans" == [[0-9]* ]] ; then
-				maxplayers="$ans"
-				step1=1
-			else
-				step1=0
-			fi
-		done
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "How many concurrent players should be allowed on the server (recommendation based on system performance: $maxusers)"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == [[0-9]* ]] ; then
+			maxplayers="$ans"
+			step1=1
+		else
+			step1=0
+		fi
+	done
+
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "What IP should the server bind to? (Only useful if your machine has more than one IP assigned to it, otherwise leave it blank) [num]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == [[0-9]* ]] ; then
+			maxplayers="$ans"
+			step1=1
+		else
+			step1=0
+		fi
+	done
 	
 	
 	
@@ -467,14 +482,6 @@ chmod +x server-watch.sh
 			## furthermore we will perhaps check in /etc/passwd if that user and associated group actually exist,
 			## just to prevent chown to spew errors in our face :(
 			
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 fi # end of interactive mode
