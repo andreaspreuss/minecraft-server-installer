@@ -391,6 +391,7 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Should Player vs. Player combat be enabled? [y/n]"
 		read ans
+		dbgPrint "$ans"
 		if [ "$ans" == "y" ] ; then
 			pvp="true"
 			step=1
@@ -408,6 +409,7 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Should we use a specific level-seed to start with (put 0 for random seed) [num]"
 		read ans
+		dbgPrint "$ans"
 		if [[ "$ans" == [0-9]* ]] ; then
 			if [[ "$ans" == "0" ]] ; then
 				levelseed=""
@@ -426,6 +428,7 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Enter a port-number here if you do not want to use the default port (25565) for the server. [num]"
 		read ans
+		dbgPrint "$ans"
 		if [[ "$ans" == [0-9]* ]] && [[ ! $ans -lt 65535 ]] ; then
 			serverport="$ans"
 			step=1
@@ -441,6 +444,7 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Should the server use a white-list to only allow certain players to log on? [y/n]"
 		read ans
+		dbgPrint "$ans"
 		if [ "$ans" == "y" ] ; then
 			whitelist="true"
 			touch "white-list.txt"
@@ -450,6 +454,7 @@ if [ "$interactive" == true ] ; then
 				conclear
 				echo "Please enter the names of the players that should be white-listed. When you're finished, type nomoreplayers"
 				read ans1
+				dbgPrint "$ans1"
 				if [ "$ans1" == "nomoreplayers" ] ; then
 					step1=1
 				else
@@ -471,6 +476,7 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Should flight be enabled on the server (only for client-modifications, mostly considered as a hack)? [y/n]"
 		read ans
+		dbgPrint "$ans"
 		if [ "$ans" == "y" ] ; then
 			allowflight="true"
 			step=1
@@ -488,7 +494,14 @@ if [ "$interactive" == true ] ; then
 		conclear
 		echo "Which game-mode should be used? (0 = peaceful, 1 = easy [default], 2 = normal, 3 = hard)"
 		read ans
-		if [[ "$ans" [0-3]
+		dbgPrint "$ans"
+		if [[ "$ans" == [0-3]{1} ]] ; then
+			gamemode="$ans"
+			step=1
+		else
+			step=0
+		fi
+	done
 		
 	
 	
