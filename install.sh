@@ -257,6 +257,7 @@ if [ "$interactive" == true ] ; then
 	echo "Please note that all of these will be written into server.properties and can be easily changed afterwards, just open up the file and change the value from there!"
 	read ans
 	
+	# allownether
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -275,6 +276,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 
+	# viewdistance
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -290,6 +292,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 
+	# spawnmonsters
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -307,7 +310,8 @@ if [ "$interactive" == true ] ; then
 			step1=0
 		fi
 	done
-
+	
+	# spawnanimals
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -325,7 +329,8 @@ if [ "$interactive" == true ] ; then
 			step1=0
 		fi
 	done
-
+	
+	# onlinemode
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -352,6 +357,7 @@ if [ "$interactive" == true ] ; then
 		maxusers="unknown"
 	fi
 
+	# maxplayers
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -367,6 +373,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# serverip
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -385,6 +392,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# pvp
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -403,6 +411,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# levelseed
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -422,6 +431,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# serverport
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -438,6 +448,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# whitelist
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -470,6 +481,7 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# allowflight
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
@@ -488,21 +500,88 @@ if [ "$interactive" == true ] ; then
 		fi
 	done
 	
+	# gamemode
 	step=0
 	ans=""
 	until [ "$step" == 1 ] ; do
 		conclear
-		echo "Which game-mode should be used? (0 = peaceful, 1 = easy [default], 2 = normal, 3 = hard)"
+		echo "Which game-mode should be used? (0 = survival, 1 = creative)"
 		read ans
 		dbgPrint "$ans"
-		if [[ "$ans" == [0-3]{1} ]] ; then
+		if [[ "$ans" == [0-1]{1} ]] ; then
 			gamemode="$ans"
 			step=1
 		else
 			step=0
 		fi
 	done
-
+	
+	# difficulty
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "What difficulty should be used? (0 = peaceful, 1 = easy [default], 2 = normal, 3 = hard)"
+		read ans
+		dbgPrint "$ans"
+		if [[ "$ans" == [0-3]{1} ]] ; then
+			difficulty="$ans"
+			step=1
+		else
+			step=0
+		fi
+	done
+	
+	# motd
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "What should we display to newly connected players (MOTD)? [msg]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" != "" ] ; then
+			step1=0
+			ans1=""
+			until [ "$step1" == 1 ] ; do
+				conclear
+				echo "Is this MOTD correct? [y/n]"
+				echo "$ans"
+				read ans1
+				dbgPrint "$ans1"
+				if [ "$ans1" == "y" ] ; then
+					step=1
+					step1=1
+					motd="$ans"
+				elif [ "$ans1" == "n" ] ; then
+					step1=1
+					step=0
+				else
+					step1=0
+				fi
+			done
+		else
+			step1=0
+			ans1=""
+			until [ "$step1" == 1 ] ; do
+				conclear
+				echo "Are you sure that you want an empty MOTD? [y/n]"
+				read ans1
+				dbgPrint "$ans1"
+				if [ "$ans1" == "y" ] ; then
+					step=1
+					step1=1
+					motd="$ans"
+				elif [ "$ans1" == "n" ] ; then
+					step1=1
+					step=0
+				else
+					step1=0
+				fi
+			done
+	done
+	
+	
 	
 	server=""
 	
