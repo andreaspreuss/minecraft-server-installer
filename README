@@ -1,0 +1,3 @@
+Work still in progress. The goal is to provide a single shellscript for installing a minecraft server on a debian-based system.
+
+This is either done in a interactive mode or in a automated mode, where you predefine all the variables before running the script.
