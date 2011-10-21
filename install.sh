@@ -10,14 +10,6 @@
 # * Add more distros (for java-installation since apt doesnt run very well on systems like fbsd
 
 
-
-
-
-
-
-
-
-
 #####################
 ## CONFIG
 #####################
@@ -362,18 +354,142 @@ if [ "$interactive" == true ] ; then
 
 	step=0
 	ans=""
-		until [ "$step" == 1 ] ; do
-			conclear
-			echo "How many concurrent players should be allowed on the server (recommendation based on system performance: $maxusers)"
-			read ans
-			dbgPrint "$ans"
-			if [ "$ans" == [[0-9]* ]] ; then
-				maxplayers="$ans"
-				step1=1
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "How many concurrent players should be allowed on the server (recommendation based on system performance: $maxusers)"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == [[0-9]* ]] ; then
+			maxplayers="$ans"
+			step1=1
+		else
+			step1=0
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "What IP should the server bind to? (Only applies when your server has more than one IP, otherwise leave it at 0) [num]"
+		read ans
+		dbgPrint "$ans"
+		if [ "$ans" == "0" ] ; then
+			serverip="0"
+			step=1
+		elif [ "$ans" == "valid.ip" ] ; then ## <-- needs fixing
+			serverip="$ans"
+			step=1
+		else
+			step=0
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should Player vs. Player combat be enabled? [y/n]"
+		read ans
+		if [ "$ans" == "y" ] ; then
+			pvp="true"
+			step=1
+		elif [ "$ans" == "n" ] ; then
+			pvp="false"
+			step=1
+		else
+			step=0
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should we use a specific level-seed to start with (put 0 for random seed) [num]"
+		read ans
+		if [[ "$ans" == [0-9]* ]] ; then
+			if [[ "$ans" == "0" ]] ; then
+				levelseed=""
 			else
-				step1=0
+				levelseed="$ans"
 			fi
-		done
+			step=1
+		else
+			step=0
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Enter a port-number here if you do not want to use the default port (25565) for the server. [num]"
+		read ans
+		if [[ "$ans" == [0-9]* ]] && [[ ! $ans -lt 65535 ]] ; then
+			serverport="$ans"
+			step=1
+		else
+			serverport="25565"
+			step=1
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should the server use a white-list to only allow certain players to log on? [y/n]"
+		read ans
+		if [ "$ans" == "y" ] ; then
+			whitelist="true"
+			touch "white-list.txt"
+			step1=0
+			ans1=""
+			until [ "$step1" == 1 ] ; do
+				conclear
+				echo "Please enter the names of the players that should be white-listed. When you're finished, type nomoreplayers"
+				read ans1
+				if [ "$ans1" == "nomoreplayers" ] ; then
+					step1=1
+				else
+					echo "$ans1" >> "white-list.txt"
+					step1=0
+				fi
+			done
+		elif [ "$ans" == "n" ] ; then
+			whitelist="false"
+			step=1
+		else
+			step=0
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Should flight be enabled on the server (only for client-modifications, mostly considered as a hack)? [y/n]"
+		read ans
+		if [ "$ans" == "y" ] ; then
+			allowflight="true"
+			step=1
+		elif [ "$ans" == "n" ] ; then
+			allowflight="false"
+			step=1
+		else
+			step=0
+		fi
+	done
+	
+	step=0
+	ans=""
+	until [ "$step" == 1 ] ; do
+		conclear
+		echo "Which game-mode should be used? (0 = peaceful, 1 = easy [default], 2 = normal, 3 = hard)"
+		read ans
+		if [[ "$ans" [0-3]
+		
 	
 	
 	
