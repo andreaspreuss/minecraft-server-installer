@@ -600,26 +600,26 @@ if [ "$interactive" == true ] ; then
 		wget -nv -O minecraft_server.jar https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
 		server="java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui";
 		cat > server.properties <<PROPS
-#Minecraft server properties
-#Wed Sep 14 14:33:18 CEST 2011
-#Created with minecraft-installer by devvis
-level-name=world
-allow-nether=$allownether
-view-distance=$viewdistance
-spawn-monsters=$spawnmonsters
-online-mode=$onlinemode
-difficulty=$difficulty
-gamemode=$gamemode
-spawn-animals=$spawnanimals
-max-players=$maxplayers
-server-ip=$serverip
-pvp=$pvp
-level-seed=$levelseed
-server-port=$serverport
-allow-flight=$allowflight
-white-list=$whitelist
-motd=$motd
-PROPS
+	#Minecraft server properties
+	#Wed Sep 14 14:33:18 CEST 2011
+	#Created with minecraft-installer by devvis
+	level-name=world
+	allow-nether=$allownether
+	view-distance=$viewdistance
+	spawn-monsters=$spawnmonsters
+	online-mode=$onlinemode
+	difficulty=$difficulty
+	gamemode=$gamemode
+	spawn-animals=$spawnanimals
+	max-players=$maxplayers
+	server-ip=$serverip
+	pvp=$pvp
+	level-seed=$levelseed
+	server-port=$serverport
+	allow-flight=$allowflight
+	white-list=$whitelist
+	motd=$motd
+	PROPS
 
 	fi
 	
